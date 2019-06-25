@@ -1,7 +1,9 @@
 import React from "react";
 
 import Clock from "@/common/Clock";
+import useConfig from "@/hooks/useConfig";
 import useWeather from "@/hooks/useWeather";
+import Locale from "@/lib/Locale";
 
 import { FaFlag } from "react-icons/fa";
 
@@ -27,6 +29,8 @@ const styles = {
 };
 
 const WeatherTab = ({ location }) => {
+  const Config = useConfig(),
+    metric = Config.metric;
   const weather = useWeather(location.device);
 
   const renderHourly = hourly => {
@@ -70,7 +74,9 @@ const WeatherTab = ({ location }) => {
             >
               <div style={{ fontSize: 12 }}>{localTime}</div>
               <img style={styles.img_small} alt={data.iconName} src={data.iconLink} />
-              <div style={{ fontWeight: "bold", fontSize: 20 }}>{data.temperature}&deg;F</div>
+              <div style={{ fontWeight: "bold", fontSize: 20 }}>
+                {Locale("temperature", data.temperature, metric, true)}
+              </div>
             </div>
           );
         })}
@@ -128,7 +134,9 @@ const WeatherTab = ({ location }) => {
               <div>
                 <img alt={o.iconName} style={styles.img_small} src={o.iconLink} />
               </div>
-              <div style={{ fontWeight: "bold", fontSize: 20 }}>{o.temperature}&deg;F</div>
+              <div style={{ fontWeight: "bold", fontSize: 20 }}>
+                {Locale("temperature", o.temperature, metric, true)}
+              </div>
               <div>{o.temperatureDesc}</div>
             </div>
           );
@@ -166,25 +174,28 @@ const WeatherTab = ({ location }) => {
           }}
         >
           <div>
-            <FaFlag style={{ fontSize: 40 }} /> {weather.now.windDesc} {weather.now.windSpeed} MPH
+            <FaFlag style={{ fontSize: 40 }} /> {weather.now.windDesc}{" "}
+            {Locale("speed", weather.now.windSpeed, metric, true)}
           </div>
           <div style={{ fontSize: 14, textAlign: "right" }}>
             Sunrise: {sunrise} / Sunset: {sunset}
           </div>
           <div style={{ fontSize: 14, textAlign: "right" }}>
-            Visibility {weather.now.visibility}
+            Visibility {Locale("distance", weather.now.visibility, metric, false)}
           </div>
         </div>
         <div style={{ fontSize: 40, float: "left" }}>
           <span style={{ paddingTop: 10, fontSize: 48 }}>
             <img alt={weather.now.iconName} style={styles.img} src={weather.now.iconLink} />{" "}
-            {weather.now.temperature}&deg;F
+            {Locale("temperature", weather.now.temperature, metric, true)}
           </span>
           <div style={{ fontSize: 14, textAlign: "right" }}>
-            High {weather.now.highTemperature}&deg; / Low: {weather.now.lowTemperature}&deg;
+            High {Locale("temperature", weather.now.highTemperature, metric, true)} / Low:{" "}
+            {Locale("temperature", weather.now.lowTemperature, metric, true)}
           </div>
           <div style={{ fontSize: 14, textAlign: "right" }}>
-            Humidity {weather.now.humidity}% / Dew Point {weather.now.dewPoint}&deg;
+            Humidity {weather.now.humidity}% / Dew Point{" "}
+            {Locale("temperature", weather.now.dewPoint, metric, false)}&deg;
           </div>
         </div>
         <div style={{ clear: "both", marginBottom: 10 }} />

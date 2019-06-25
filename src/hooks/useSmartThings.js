@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 
 import MQTT from "@/lib/MQTT";
 
+import Locale from "@/lib/Locale";
+
 /*****************************************************************************************************
  *****************************************************************************************************
  *****************************************************************************************************/
@@ -204,6 +206,7 @@ const useTemperature = device => {
     name: device,
     temperature: temperature,
     formatted: temperature ? <span>{temperature}&deg;F</span> : "",
+    metric: temperature ? <span>{Locale("temperature", temperature, true, true)}</span> : "",
   };
 };
 

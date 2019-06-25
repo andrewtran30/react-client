@@ -2,12 +2,13 @@ import React from "react";
 
 import useConfig from "@/hooks/useConfig";
 import useWeather from "@/hooks/useWeather";
-
+import Locale from "@/lib/Locale";
 import Tile from "./Tile";
 import { FaFlag } from "react-icons/fa";
 
 const WeatherTile = () => {
   const Config = useConfig();
+  const metric = Config.metric;
   const location = (() => {
     for (const location of Config.weather.locations) {
       if (location.default) {
@@ -51,16 +52,16 @@ const WeatherTile = () => {
           <div style={{ display: "inline" }}>
             <span
               style={{
-                fontSize: 56,
+                fontSize: 44,
               }}
             >
-              {now.temperature}
-              &deg;F
+              {Locale("temperature", now.temperature, metric, true)}
             </span>
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
-          {now.highTemperature}&deg;F / {now.lowTemperature}&deg;F
+          {Locale("temperature", now.highTemperature, metric, true)} /{" "}
+          {Locale("temperature", now.lowTemperature, metric, true)}
         </div>
         <div
           style={{
@@ -70,7 +71,8 @@ const WeatherTile = () => {
             textAlign: "center",
           }}
         >
-          <FaFlag style={{ fontSize: 32 }} /> {now.windDescShort} {now.windSpeed} MPH
+          <FaFlag style={{ fontSize: 32 }} /> {now.windDescShort}{" "}
+          {Locale("speed", now.windSpeed, metric, true)}
         </div>
       </div>
     </Tile>

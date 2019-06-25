@@ -10,6 +10,7 @@ import useThermostat from "@/hooks/useThermostat";
 import thermostatReducer from "@/hooks/reducers/thermostatReducer";
 
 import DelayedTask from "@/lib/DelayedTask";
+import Locale from "@/lib/Locale";
 
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 
@@ -17,7 +18,8 @@ import RemoteButton from "@/common/RemoteButton";
 import Clock from "@/common/Clock";
 
 const ThermostatButton = ({ device }) => {
-  const Config = useConfig();
+  const Config = useConfig(),
+    metric = Config.metric;
   const thermostat = useThermostat(device);
   const delayedTask = useRef(null);
 
@@ -97,11 +99,11 @@ const ThermostatButton = ({ device }) => {
           alt={weather.now.iconName}
         />
         <div style={{ display: "inline", paddingTop: 0, fontSize: 24 }}>
-          {weather.now.temperature}&deg; F
+          {Locale("temperature", weather.now.temperature, metric, true)}
         </div>
       </div>
       <div style={{ fontSize: 16, fontWeight: "bold" }}>
-        Inside: {thermostat.ambient_temperature_f}&deg;F
+        Inside: {Locale("temperature", thermostat.ambient_temperature_f, metric, true)}
       </div>
       <RemoteButton onClick={handleClickUp}>
         <FaChevronUp />
@@ -117,7 +119,7 @@ const ThermostatButton = ({ device }) => {
           marginRight: "auto",
         }}
       >
-        {targetTemperature}&deg;F
+        {Locale("temperature", targetTemperature, metric, true)}
       </div>
       <RemoteButton onClick={handleClickDown}>
         <FaChevronDown />

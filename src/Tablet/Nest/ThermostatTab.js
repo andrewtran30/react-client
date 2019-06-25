@@ -10,23 +10,37 @@ import {
   ListGroup,
   ListGroupItem,
 } from "react-bootstrap";
+
 import Thermostat from "react-nest-thermostat";
 import { FaChevronUp, FaChevronDown, FaChevronRight } from "react-icons/fa";
 
+import useConfig from "@/hooks/useConfig";
 import useWeather from "@/hooks/useWeather";
 import useThermostat from "@/hooks/useThermostat";
 import thermostatReducer from "@/hooks/reducers/thermostatReducer";
+import Locale, { FtoC, CtoF } from "@/lib/Locale";
 
 const ThermostatTab = ({ thermostat }) => {
   const device = thermostat.device;
+  const Config = useConfig(),
+    metric = Config.metric;
   const thermoState = useThermostat(device);
   const [, dispatch] = useReducer(thermostatReducer, { device: device });
   const weather = useWeather(thermoState ? thermoState.postal_code : null),
     { now } = weather;
 
+  if (!thermoState) {
+    return null;
+  }
   const hvacModeChange = mode => {
     try {
       dispatch({ type: "hvac_mode", value: mode });
+    } catch (e) {}
+  };
+
+  const setTargetTemperature = temp => {
+    try {
+      dispatch({ type: "target_temp", value: temp });
     } catch (e) {}
   };
 
@@ -37,10 +51,18 @@ const ThermostatTab = ({ thermostat }) => {
     } catch (e) {}
   };
 
-  const setTargetTemperature = temp => {
-    try {
-      dispatch({ type: "target_temp", value: temp });
-    } catch (e) {}
+  const adjustTemperatureButton = delta => {
+    const d = metric ? parseInt((10 * delta) / 1.8) / 10 : delta;
+    return (
+      <Button
+        onClick={() => {
+          adjustTemperature(d);
+        }}
+      >
+        {delta < 0 ? <FaChevronDown /> : <FaChevronUp />}
+        {d}
+      </Button>
+    );
   };
 
   const render = () => {
@@ -64,7 +86,7 @@ const ThermostatTab = ({ thermostat }) => {
       }
       return (
         <Button block disabled={disabled} onClick={() => setTargetTemperature(n)}>
-          {icon} Set to {n}&deg;
+          {icon} Set to {Locale("temperature", n, metric, true)}
         </Button>
       );
     };
@@ -108,6 +130,9 @@ const ThermostatTab = ({ thermostat }) => {
     };
 
     // RENDER
+    if (!thermostat.ambient_temperature_f || !thermostat.target_temperature_f) {
+      return null;
+    }
     return (
       <Row style={{ marginTop: 6 }}>
         <Col sm={3}>
@@ -118,7 +143,9 @@ const ThermostatTab = ({ thermostat }) => {
             </ListGroupItem>
             <ListGroupItem>
               Ambient Temperature
-              <span style={{ float: "right" }}>{thermostat.ambient_temperature_f}&deg;F</span>
+              <span style={{ float: "right" }}>
+                {Locale("temperature", thermostat.ambient_temperature_f, metric, true)}
+              </span>
             </ListGroupItem>
             <ListGroupItem>
               Ambient Humidity
@@ -140,7 +167,9 @@ const ThermostatTab = ({ thermostat }) => {
             </ListGroupItem>
             <ListGroupItem>
               Outside Temperature
-              <span style={{ float: "right" }}>{now.temperature}&deg;F</span>
+              <span style={{ float: "right" }}>
+                {Locale("temperature", now.temperature, metric, true)}
+              </span>
             </ListGroupItem>
             <ListGroupItem>
               Outside Humidity
@@ -159,36 +188,18 @@ const ThermostatTab = ({ thermostat }) => {
               width="400px"
               height="400px"
               away={Boolean(thermostat.away !== "home")}
-              ambientTemperature={thermostat.ambient_temperature_f}
-              targetTemperature={thermostat.target_temperature_f}
+              ambientTemperature={FtoC(thermostat.ambient_temperature_f, metric)}
+              targetTemperature={FtoC(thermostat.target_temperature_f, metric)}
               hvacMode={thermostat.hvac_state}
               leaf={thermostat.has_leaf}
             />
             <ButtonGroup style={{ marginBottom: 8 }}>
-              <Button onClick={() => adjustTemperature(-3)}>
-                <FaChevronDown />
-                &nbsp; 3 &deg;
-              </Button>
-              <Button onClick={() => adjustTemperature(-2)}>
-                <FaChevronDown />
-                &nbsp; 2 &deg;
-              </Button>
-              <Button onClick={() => adjustTemperature(-1)}>
-                <FaChevronDown />
-                &nbsp; 1 &deg;
-              </Button>
-              <Button onClick={() => adjustTemperature(1)}>
-                <FaChevronUp />
-                &nbsp; 1 &deg;
-              </Button>
-              <Button onClick={() => adjustTemperature(2)}>
-                <FaChevronUp />
-                &nbsp; 2 &deg;
-              </Button>
-              <Button onClick={() => adjustTemperature(3)}>
-                <FaChevronUp />
-                &nbsp; 3 &deg;
-              </Button>
+              {adjustTemperatureButton(-3)}
+              {adjustTemperatureButton(-2)}
+              {adjustTemperatureButton(-1)}
+              {adjustTemperatureButton(1)}
+              {adjustTemperatureButton(2)}
+              {adjustTemperatureButton(3)}
             </ButtonGroup>
             <ToggleButtonGroup
               onChange={hvacModeChange}
@@ -219,7 +230,9 @@ const ThermostatTab = ({ thermostat }) => {
           <ListGroup>
             <ListGroupItem>
               Target Temperature
-              <span style={{ float: "right" }}>{thermostat.target_temperature_f}&deg;F</span>
+              <span style={{ float: "right" }}>
+                {Locale("temperature", thermostat.target_temperature_f, metric, true)}
+              </span>
             </ListGroupItem>
             <ListGroupItem>
               Time To Target

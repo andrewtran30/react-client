@@ -65,7 +65,6 @@ const TheaterTile = ({ title }) => {
     if (inputs.tv === tv.input && inputs.avr === avr.input) {
       if (currentDevice.current === "None") {
         currentDevice.current = activity.defaultDevice;
-        console.log("FOUND");
       }
       if (currentActivity !== activity.name) {
         if (tv.power && avr.power) {
@@ -81,14 +80,11 @@ const TheaterTile = ({ title }) => {
   }
 
   const renderCurrentDevice = () => {
-    console.warn("rcd", currentDevice.current);
     if (currentDevice.current === "TiVo") {
       return <TiVo device={deviceMap.tivo} />;
     } else if (currentDevice.current === "Apple TV") {
-      console.log("atv", appleTV);
       return <AppleTV device={appleTV.device} />;
     } else if (currentDevice.current === "AppleTV") {
-      console.log("atv", appleTV);
       return <AppleTV device={appleTV.device} />;
     } else {
       return <div>Current Device: {currentDevice.current}</div>;
