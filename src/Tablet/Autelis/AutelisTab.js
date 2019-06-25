@@ -8,7 +8,7 @@ import useAutelis from "@/hooks/useAutelis";
 import autelisReducer from "@/hooks/reducers/autelisReducer";
 import useWeather from "@/hooks/useWeather";
 import MacroTile from "../Dashboard/MacroTile";
-import Locale, { CtoF, FtoC } from "@/lib/Locale";
+import Locale from "@/lib/Locale";
 
 const AutelisTab = () => {
   const Config = useConfig();
@@ -72,7 +72,7 @@ const AutelisTab = () => {
           <div>Sunset: {sunset}</div>
         </div>
         <div style={{ fontSize: 38, flex: 1 }}>
-          {display_city} {img} {Locale("temperature", now.temperature, metric, true)}
+          {display_city} {img} {Locale.format("temperature", now.temperature, metric, true)}
         </div>
       </div>
     );
@@ -140,9 +140,9 @@ const AutelisTab = () => {
 
     const renderTemp = () => {
       if (poolOn) {
-        return <>Pool {Locale("temperature", poolTemp, metric, true)}</>;
+        return <>Pool {Locale.format("temperature", poolTemp, metric, true)}</>;
       } else if (spaOn) {
-        return <>Spa {Locale("temperature", spaTemp, metric, true)}</>;
+        return <>Spa {Locale.format("temperature", spaTemp, metric, true)}</>;
       } else {
         return <>All Off</>;
       }
@@ -209,7 +209,7 @@ const AutelisTab = () => {
             fontSize: 36,
           }}
         >
-          Solar {Locale("temperature", solarTemp, metric, true)}
+          Solar {Locale.format("temperature", solarTemp, metric, true)}
         </div>
       </div>
     );
@@ -391,12 +391,12 @@ const AutelisTab = () => {
         <div syle={{ flex: 0.2 }}>
           <NumberField
             name="poolSetpoint"
-            value={FtoC(poolSetpoint, metric)}
+            value={Locale.ftoc(poolSetpoint, metric)}
             step={metric ? 0.1 : 1}
             onValueChange={newValue => {
               dispatch({
                 type: "poolSetpoint",
-                value: CtoF(newValue, metric),
+                value: Locale.ctof(newValue, metric),
               });
             }}
           />
@@ -443,12 +443,12 @@ const AutelisTab = () => {
         <div syle={{ flex: 0.2 }}>
           <NumberField
             name="spaSetpoint"
-            value={FtoC(spaSetpoint, metric)}
+            value={Locale.ftoc(spaSetpoint, metric)}
             step={metric ? 0.1 : 1}
             onValueChange={newValue => {
               dispatch({
                 type: "spaSetpoint",
-                value: CtoF(newValue, metric),
+                value: Locale.ctof(newValue, metric),
               });
             }}
           />

@@ -18,7 +18,7 @@ import useConfig from "@/hooks/useConfig";
 import useWeather from "@/hooks/useWeather";
 import useThermostat from "@/hooks/useThermostat";
 import thermostatReducer from "@/hooks/reducers/thermostatReducer";
-import Locale, { FtoC, CtoF } from "@/lib/Locale";
+import Locale from "@/lib/Locale";
 
 const ThermostatTab = ({ thermostat }) => {
   const device = thermostat.device;
@@ -86,7 +86,7 @@ const ThermostatTab = ({ thermostat }) => {
       }
       return (
         <Button block disabled={disabled} onClick={() => setTargetTemperature(n)}>
-          {icon} Set to {Locale("temperature", n, metric, true)}
+          {icon} Set to {Locale.format("temperature", n, metric, true)}
         </Button>
       );
     };
@@ -144,7 +144,7 @@ const ThermostatTab = ({ thermostat }) => {
             <ListGroupItem>
               Ambient Temperature
               <span style={{ float: "right" }}>
-                {Locale("temperature", thermostat.ambient_temperature_f, metric, true)}
+                {Locale.format("temperature", thermostat.ambient_temperature_f, metric, true)}
               </span>
             </ListGroupItem>
             <ListGroupItem>
@@ -168,7 +168,7 @@ const ThermostatTab = ({ thermostat }) => {
             <ListGroupItem>
               Outside Temperature
               <span style={{ float: "right" }}>
-                {Locale("temperature", now.temperature, metric, true)}
+                {Locale.format("temperature", now.temperature, metric, true)}
               </span>
             </ListGroupItem>
             <ListGroupItem>
@@ -188,8 +188,8 @@ const ThermostatTab = ({ thermostat }) => {
               width="400px"
               height="400px"
               away={Boolean(thermostat.away !== "home")}
-              ambientTemperature={FtoC(thermostat.ambient_temperature_f, metric)}
-              targetTemperature={FtoC(thermostat.target_temperature_f, metric)}
+              ambientTemperature={Locale.ftoc(thermostat.ambient_temperature_f, metric)}
+              targetTemperature={Locale.ftoc(thermostat.target_temperature_f, metric)}
               hvacMode={thermostat.hvac_state}
               leaf={thermostat.has_leaf}
             />
@@ -231,7 +231,7 @@ const ThermostatTab = ({ thermostat }) => {
             <ListGroupItem>
               Target Temperature
               <span style={{ float: "right" }}>
-                {Locale("temperature", thermostat.target_temperature_f, metric, true)}
+                {Locale.format("temperature", thermostat.target_temperature_f, metric, true)}
               </span>
             </ListGroupItem>
             <ListGroupItem>

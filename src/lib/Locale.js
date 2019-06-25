@@ -18,7 +18,9 @@ const val = n => {
   return parseInt(n * 10) / 10;
 };
 
-export default (kind, value, metric, includeUnits) => {
+const Locale = {};
+
+Locale.format = (kind, value, metric, includeUnits) => {
   switch (kind) {
     case "temperature":
     case "temp":
@@ -61,20 +63,27 @@ export default (kind, value, metric, includeUnits) => {
   }
 };
 
-const FtoC = (n, metric) => {
+const ftoc = (n, metric) => {
   return metric ? parseInt((10 * (Number(n) - 32)) / 1.8, 10) / 10 : parseInt(n, 10);
 };
 
-const CtoF = (n, metric) => {
+const ctof = (n, metric) => {
   return metric ? parseInt((Number(n) * 9) / 5 + 32, 10) : parseInt(n, 10);
 };
 
-const MPHtoKPH = (n, metric) => {
+const mphtokph = (n, metric) => {
   return metric ? parseInt(Number(n) * 1.609344 * 10, 10) / 10 : parseInt(n, 10);
 };
-const KPHtoMPH = (n, metric) => {
+
+const kphtomph = (n, metric) => {
   return metric ? parseInt(Number(n) * 0.6213711922 * 10, 10) / 10 : parseInt(n, 10);
 };
 
+Locale.ftoc = ftoc;
+Locale.ctof = ctof;
+Locale.mphtokph = mphtokph;
+Locale.mphtokph = kphtomph;
+
 //
-export { FtoC, CtoF, MPHtoKPH, KPHtoMPH };
+export default Locale;
+export { ftoc, ctof, mphtokph, kphtomph };
